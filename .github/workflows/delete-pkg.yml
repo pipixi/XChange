@@ -1,0 +1,18 @@
+name: Delete old packages
+
+on:
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  clean-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete deployment packages
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'xchange-stream-binance'
+          package-type: 'maven'
+          # 仅保留最近的 3 个版本，其余全部删除
+          min-versions-to-keep: 3
+          # 如果是组织包，需要传入有删除权限的 Org-level PAT
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

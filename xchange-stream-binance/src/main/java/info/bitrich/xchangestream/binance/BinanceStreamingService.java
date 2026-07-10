@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+
 import org.knowm.xchange.ExchangeSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,6 +260,17 @@ public class BinanceStreamingService extends JsonNettyStreamingService {
   public void setChannelInactiveHandler(
       WebSocketClientHandler.WebSocketMessageHandler channelInactiveHandler) {
     this.channelInactiveHandler = channelInactiveHandler;
+  }
+
+  /**
+   *
+   * if current connection idle for some reason close channel then trigger reconnect
+   */
+  @Override
+  protected void handleIdle(ChannelHandlerContext ctx) {
+    super.handleIdle(ctx);
+    LOGGER.warn("Channel idle. Remote: {}", ctx.channel().remoteAddress());
+    ctx.channel().close();
   }
 
   /**

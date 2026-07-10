@@ -9,9 +9,10 @@ on:
 
 jobs:
   build:
-
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 17
@@ -20,7 +21,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Build with Maven
-      run: mvn clean deploy --no-transfer-progress --batch-mode --settings etc/settings.xml -Dfmt.skip=true;
-      env:
-        CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-        CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: mvn clean deploy --no-transfer-progress --batch-mode -pl xchange-stream-binance -am -Dfmt.skip=true -DskipTests;
